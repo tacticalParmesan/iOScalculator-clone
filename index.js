@@ -1,4 +1,17 @@
-// Basic arithmetic operations
+// ----------- Global variables & References -----------
+const displayValue = document.querySelector("#displayed-numbers");
+const numberButtons = document.querySelectorAll(".number-button");
+const operationButtons = document.querySelectorAll(".operation-button");
+const evaluateButton = document.querySelector("#evaluate");
+let selectedOperation = "";
+let firstNumber = 0;
+let operation = "";
+let secondNumber = undefined;
+let result = 0;
+let isSelecting = false;
+
+// ----------- Basic arithmetic operations -----------
+
 function add(firstAddend, secondAddend) {
 	return firstAddend + secondAddend;
 }
@@ -19,13 +32,15 @@ function divide(firstDividend, secondDividend) {
 	}
 }
 
-// Expression evaluation
+// ----------- Expression evaluation -----------
 
-function operate(operator, firstNumber, secondNumber) {
+function operate(operator, firstNumber, secondNumber = firstNumber) {
 	/* The operate function will call a different operation function according to the
 	expression given as input */
 	/* Every operation is store inside an object used as a collection of operands, so
-	that when the user gives an expression it will be evaluated according to the symbol */
+	that when the user gives an expression it will be evaluated according to the symbol.	
+	/* If the second number is omitted, in that case perform the operation with
+	just the first one. */
 	const operators = {
 		"+": add,
 		"-": subtract,
@@ -35,20 +50,14 @@ function operate(operator, firstNumber, secondNumber) {
 
 	// Perform the calculation based on the given symbol
 	if (operator in operators) {
-		return operators[operator](firstNumber, secondNumber);
+		return operators[operator](+firstNumber, +secondNumber);
 	}
 }
 
-// Populate the display when pressing number buttons
-const displayValueElement = document.querySelector("#displayed-numbers");
-let displayValueContent = displayValueElement.textContent;
-const numberButtons = document.querySelectorAll(".number-button");
-const operationButtons = document.querySelectorAll(".operation-button");
-
-function updateDisplayWithNumbers() {
-	/** 
+function updateNumbers() {
+	/**
 	 * Update the display by concatenating numbers everytime a number button is pressed.
-	 * Every number button will add their own text content to the display. 
+	 * Every number button will add their own text content to the display.
 	 */
 	numberButtons.forEach((numberButton) => {
 		numberButton.addEventListener("mousedown", (clickEvent) => {
@@ -56,44 +65,63 @@ function updateDisplayWithNumbers() {
 
 			/* Check if the only number is a zero, if yes, it means the calculator
 			has been turn on right now or it has been reset. Let's replace the 0.*/
-			if(displayValueContent === "0"){
-				displayValueElement.textContent = numberToAdd;
+			if (displayValue.textContent === "0") {
+				displayValue.textContent = numberToAdd;
 			} else {
-				displayValueElement.textContent += numberToAdd;
+				displayValue.textContent += numberToAdd;
+			}
+
+			/* If the user has not already selected an operation, load the displayed number
+			in memory to perform the operation later, if it has, the program should expect 
+			the second number.*/
+			if (!isSelecting) {
+				firstNumber = displayValue.textContent;
+			} else if (isSelecting) {
+				secondNumber = displayValue.textContent;
 			}
 
 			// Update the display value variable to be used to perform calculations
-			displayValueContent = displayValueElement.textContent
-		});
-	})
-}
-
-function updateDisplayWithOperations() {
-	/**
-	 * Update the display by concatenating numbers everytime an op button is pressed.
-	 * Every operation button will add their own value to the display. 
-	 */
-	operationButtons.forEach((operationButton) => {
-		operationButton.addEventListener("mousedown", (clickEvent) => {
-			const operationToAdd = clickEvent.target.id;
-			
-			/* Check if the last charcter in the displayed string is a number to avoid
-			being able to start with an operation.
-			We are looking for the second last character because there are *intended* 
-			spaces in the id of the click target.*/
-			let lastDigit = displayValueElement.textContent.slice(-2);
-			if(lastDigit !== "0"){
-				if(!isNaN(lastDigit)) {
-					displayValueElement.textContent += operationToAdd;
-				}
-			}
-
-			// Update the display value variable to be used to perform calculations
-			displayValueContent = displayValueElement.textContent
+			console.log(firstNumber);
 		});
 	});
 }
 
+function selectOperation() {
+	/**
+	 * Select an operation to be perfomed once the user presses the "=" button.
+	 * TODO: Every operation button will change appearance when selected.
+	 */
+	operationButtons.forEach((operationButton) => {
+		operationButton.addEventListener("mousedown", (clickEvent) => {
+			selectedOperation = clickEvent.target.id;
 
-updateDisplayWithNumbers();
-updateDisplayWithOperations();
+			/* Let the program know that the user has selected an operation and that it
+			should expect a second number, but still we handle the case it's not given
+			by defaulting the second number to the first number in the operate function.*/
+			operation = selectedOperation;
+			isSelecting = true;
+
+			// Clear the display
+			if (isSelecting) {
+				displayValue.textContent = 0;
+			}
+		});
+	});
+}
+
+function performOperation() {
+	/* Call the operate function, update the result and the first number m and finally
+	toggle the selecting operation flag off*/
+	displayValue.textContent = firstNumber = operate(
+		selectedOperation,
+		firstNumber,
+		secondNumber
+	);
+
+}
+
+// ----------- Main Execution ----------
+
+updateNumbers();
+selectOperation();
+evaluateButton.addEventListener("mousedown", performOperation);
