@@ -8,7 +8,7 @@ let firstNumber = 0;
 let operation = "";
 let secondNumber = undefined;
 let result = 0;
-let isSelecting = false;
+let isCalculating = false;
 
 // ----------- Basic arithmetic operations -----------
 
@@ -67,16 +67,20 @@ function updateNumbers() {
 			has been turn on right now or it has been reset. Let's replace the 0.*/
 			if (displayValue.textContent === "0") {
 				displayValue.textContent = numberToAdd;
-			} else {
-				displayValue.textContent += numberToAdd;
+			} else if (displayValue !== "0") {
+				if (!isCalculating) {
+					displayValue.textContent = numberToAdd;
+				} else {
+					displayValue.textContent += numberToAdd
+				}
 			}
 
 			/* If the user has not already selected an operation, load the displayed number
 			in memory to perform the operation later, if it has, the program should expect 
 			the second number.*/
-			if (!isSelecting) {
+			if (!isCalculating) {
 				firstNumber = displayValue.textContent;
-			} else if (isSelecting) {
+			} else if (isCalculating) {
 				secondNumber = displayValue.textContent;
 			}
 
@@ -99,10 +103,10 @@ function selectOperation() {
 			should expect a second number, but still we handle the case it's not given
 			by defaulting the second number to the first number in the operate function.*/
 			operation = selectedOperation;
-			isSelecting = true;
+			isCalculating = true;
 
 			// Clear the display
-			if (isSelecting) {
+			if (isCalculating) {
 				displayValue.textContent = 0;
 			}
 		});
@@ -110,14 +114,16 @@ function selectOperation() {
 }
 
 function performOperation() {
-	/* Call the operate function, update the result and the first number m and finally
+	/* Call the operate function, update the result and the first number and finally
 	toggle the selecting operation flag off*/
-	displayValue.textContent = firstNumber = operate(
-		selectedOperation,
-		firstNumber,
-		secondNumber
-	);
-
+	if (isCalculating) {
+		displayValue.textContent = firstNumber = operate(
+			selectedOperation,
+			firstNumber,
+			secondNumber
+		);
+	}
+	isCalculating = false;
 }
 
 // ----------- Main Execution ----------
