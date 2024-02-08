@@ -129,6 +129,17 @@ function resetCalculator() {
 	}
 }
 
+function changeSign() {
+	const changeSignButton = document.querySelector("#sign-btn");
+
+	changeSignButton.addEventListener("mousedown", () => {
+		if (displayValue.textContent != 0) {
+			displayValue.textContent *= -1;
+		}
+	})
+
+}
+
 // ---------- Load event listeneres on page load ----------
 
 function loadFunctions() {
@@ -136,6 +147,7 @@ function loadFunctions() {
 		listenForNumberInput();
 		listenForOperationSelection();
 		listenForReset();
+		changeSign();
 		performOperation();
 	});
 }
