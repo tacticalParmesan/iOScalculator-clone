@@ -54,80 +54,90 @@ function operate(operator, firstNumber, secondNumber = firstNumber) {
 	}
 }
 
-function updateNumbers() {
-	/**
-	 * Update the display by concatenating numbers everytime a number button is pressed.
-	 * Every number button will add their own text content to the display.
-	 */
-	numberButtons.forEach((numberButton) => {
-		numberButton.addEventListener("mousedown", (clickEvent) => {
-			const numberToAdd = clickEvent.target.textContent;
+function updateDisplayedValue(clickedNumber) {
+	/* This function gets called every time the user presses a number button: it's
+	purpose is to add numbers to the display. It checks for zero since zero means
+	that the calculator has started now or has been reset. */
 
-			/* Check if the only number is a zero, if yes, it means the calculator
-			has been turn on right now or it has been reset. Let's replace the 0.*/
-			if (displayValue.textContent === "0") {
-				displayValue.textContent = numberToAdd;
-			} else if (displayValue !== "0") {
-				if (!isCalculating) {
-					displayValue.textContent = numberToAdd;
-				} else {
-					displayValue.textContent += numberToAdd
-				}
-			}
+	// Initial state (turned on now or reset)
+	if (displayValue.textContent == 0) {
+		displayValue.textContent = clickedNumber;
+	} 
+	// An operation has been performed just now and the display shows the result
+	else if (displayValue.textContent == result) {
+		displayValue.textContent = clickedNumber;
 
-			/* If the user has not already selected an operation, load the displayed number
-			in memory to perform the operation later, if it has, the program should expect 
-			the second number.*/
-			if (!isCalculating) {
-				firstNumber = displayValue.textContent;
-			} else if (isCalculating) {
-				secondNumber = displayValue.textContent;
-			}
-
-			// Update the display value variable to be used to perform calculations
-			console.log(firstNumber);
-		});
-	});
+		// Now we can reset the result, waiting for a new one
+		result = 0;
+	}
+	// Added first number after zero... 
+	else if (displayValue.textContent != 0) {
+		// ...but not calling an operation yet
+		if (!isCalculating) {
+			displayValue.textContent += clickedNumber;
+		}
+		// Operation button pressed, calc for waiting second number;
+		else {
+			displayValue.textContent = clickedNumber;
+		}
+	}
 }
 
-function selectOperation() {
-	/**
-	 * Select an operation to be perfomed once the user presses the "=" button.
-	 * TODO: Every operation button will change appearance when selected.
-	 */
-	operationButtons.forEach((operationButton) => {
-		operationButton.addEventListener("mousedown", (clickEvent) => {
-			selectedOperation = clickEvent.target.id;
 
-			/* Let the program know that the user has selected an operation and that it
-			should expect a second number, but still we handle the case it's not given
-			by defaulting the second number to the first number in the operate function.*/
-			operation = selectedOperation;
-			isCalculating = true;
+function setCurrentOperation(clickedOperation) {
+	selectedOperation = clickedOperation;
+	firstNumber = displayValue.textContent;
+	isCalculating = true;
+}
 
-			// Clear the display
-			if (isCalculating) {
-				displayValue.textContent = 0;
-			}
-		});
-	});
+function listenForOperationSelection() {
+	operationButtons.forEach( function(operationButton) {
+		operationButton.addEventListener("mousedown", (ev) => {
+			const clickedOperation = ev.target.id;
+			setCurrentOperation(clickedOperation);
+		})
+	})
+}
+
+function listenForNumberInput() {
+	numberButtons.forEach( function(numberButton) {
+		numberButton.addEventListener("mousedown", (ev) => {
+			const clickedNumberValue = ev.target.textContent;
+			updateDisplayedValue(clickedNumberValue);
+		})
+	})
 }
 
 function performOperation() {
-	/* Call the operate function, update the result and the first number and finally
-	toggle the selecting operation flag off*/
-	if (isCalculating) {
-		displayValue.textContent = firstNumber = operate(
-			selectedOperation,
-			firstNumber,
-			secondNumber
-		);
-	}
-	isCalculating = false;
+	evaluateButton.addEventListener("mousedown", () => {
+		if(isCalculating) {
+			secondNumber = displayValue.textContent;
+			result = operate(selectedOperation, firstNumber, secondNumber);
+			displayValue.textContent = result;
+		}
+		isCalculating = false;
+
+	})
 }
 
-// ----------- Main Execution ----------
+// ---------- DEBUGGER ----------
+function myDebugger() {
+	console.log(firstNumber);
+	console.log(secondNumber);
+	console.log(selectedOperation);
+	console.log(isCalculating);
+}
 
-updateNumbers();
-selectOperation();
-evaluateButton.addEventListener("mousedown", performOperation);
+
+// ---------- Load event listeneres on page load ----------
+
+function loadFunctions() {
+	document.addEventListener("DOMContentLoaded", () => {
+		listenForNumberInput();
+		listenForOperationSelection();
+		performOperation();
+		myDebugger();
+	})
+}
+
+loadFunctions();
