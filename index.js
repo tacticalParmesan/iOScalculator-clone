@@ -50,15 +50,17 @@ function operate(operator, firstNumber, secondNumber = firstNumber) {
 
 	// Perform the calculation based on the given symbol
 	if (operator in operators) {
-		return Math.round(operators[operator](+firstNumber, +secondNumber));
+		result = operators[operator](+firstNumber, +secondNumber);
+		return isFloat(result) ? parseFloat(result.toFixed(6)) : result;
+		}
 	}
-}
+
 
 function updateDisplayedValue(clickedNumber) {
 	/* This function gets called every time the user presses a number button: it's
 	purpose is to add numbers to the display. It checks for zero since zero means
 	that the calculator has started now or has been reset. */
-	if (displayValue.textContent == 0) {
+	if (displayValue.textContent == 0 && !isFloat(displayValue.textContent)) {
 		displayValue.textContent = clickedNumber;
 	} else if (canOverwrite) {
 		displayValue.textContent = clickedNumber;
@@ -117,14 +119,16 @@ function performOperation() {
 }
 
 function resetCalculator() {
-	if (displayValue.textContent != 0 && !isCalculating) {
+	if (displayValue.textContent != 0 || displayValue.textContent != 0 && isCalculating) {
 		displayValue.textContent = 0;
 		resetButton.textContent = "AC";
-	} else if (displayValue.textContent != 0 && isCalculating) {
-		displayValue.textContent = 0;
-	} else if (displayValue.textContent == 0 && isCalculating){
+	}
+	else if (displayValue == 0 && isCalculating) {
 		isCalculating = false;
-		resetButton.textContent = "AC";
+	} else {
+		isCalculating = false;
+		firstNumber = 0;
+		secondNumber = undefined;
 		selectedOperation = undefined;
 	}
 }
@@ -145,6 +149,25 @@ function getPercentageFormat() {
 	percentageButton.addEventListener("mousedown", () => displayValue.textContent /= 10);
 }
 
+function makeNumberDecimal() {
+	const floatButton = document.querySelector(".float-button");
+
+	floatButton.addEventListener("mousedown", () => {
+		if (!isFloat(displayValue.textContent)) {
+			displayValue.textContent += "."
+		}
+	})
+}
+
+// ---------- Utility functions ----------
+
+function isFloat(numberToCheck) {
+	if (!Number.isInteger(+numberToCheck) || String(numberToCheck).includes(".")){
+		return true;
+	}
+	return false;
+}
+
 // ---------- Load event listeneres on page load ----------
 
 function loadFunctions() {
@@ -153,6 +176,7 @@ function loadFunctions() {
 		listenForOperationSelection();
 		listenForReset();
 		changeSign();
+		makeNumberDecimal();
 		getPercentageFormat();
 		performOperation();
 	});
