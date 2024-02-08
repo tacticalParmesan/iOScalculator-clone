@@ -71,6 +71,8 @@ function updateDisplayedValue(clickedNumber) {
 }
 
 function setCurrentOperation(clickedOperation) {
+	/* Set the current operation to the clicked one, save the first number in memory and
+	 enable the calcution and display overwrting behaviour.*/
 	selectedOperation = clickedOperation;
 	firstNumber = displayValue.textContent;
 	isCalculating = true;
@@ -107,6 +109,8 @@ function listenForReset() {
 function performOperation() {
 	const evaluateButton = document.querySelector("#evaluate");
 
+	/* Allow the evaluation only if there is a selected operation, perform the caclulation and 
+	update the screen accordingly.*/
 	evaluateButton.addEventListener("mousedown", () => {
 		if (selectedOperation !== undefined) {
 			secondNumber = displayValue.textContent;
@@ -119,13 +123,16 @@ function performOperation() {
 }
 
 function resetCalculator() {
-	if (displayValue.textContent != 0 || displayValue.textContent != 0 && isCalculating) {
+	/* Delete the current displayed number, if there is an operation loaded reset it and when pressing
+	AC reset everything. */
+	if (displayValue.textContent != 0) {
 		displayValue.textContent = 0;
 		resetButton.textContent = "AC";
 	}
 	else if (displayValue == 0 && isCalculating) {
 		isCalculating = false;
 	} else {
+		resetButton.textContent = "AC";
 		isCalculating = false;
 		firstNumber = 0;
 		secondNumber = undefined;
