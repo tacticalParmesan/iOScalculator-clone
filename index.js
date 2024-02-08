@@ -50,7 +50,7 @@ function operate(operator, firstNumber, secondNumber = firstNumber) {
 
 	// Perform the calculation based on the given symbol
 	if (operator in operators) {
-		return operators[operator](+firstNumber, +secondNumber);
+		return Math.round(operators[operator](+firstNumber, +secondNumber));
 	}
 }
 
@@ -137,7 +137,12 @@ function changeSign() {
 			displayValue.textContent *= -1;
 		}
 	})
+}
 
+function getPercentageFormat() {
+	const percentageButton = document.querySelector("#percentage-btn");
+
+	percentageButton.addEventListener("mousedown", () => displayValue.textContent /= 10);
 }
 
 // ---------- Load event listeneres on page load ----------
@@ -148,6 +153,7 @@ function loadFunctions() {
 		listenForOperationSelection();
 		listenForReset();
 		changeSign();
+		getPercentageFormat();
 		performOperation();
 	});
 }
