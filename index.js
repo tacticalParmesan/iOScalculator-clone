@@ -9,6 +9,7 @@ let operation = "";
 let secondNumber = undefined;
 let result = 0;
 let isCalculating = false;
+let canOverwrite = false;
 
 // ----------- Basic arithmetic operations -----------
 
@@ -58,36 +59,23 @@ function updateDisplayedValue(clickedNumber) {
 	/* This function gets called every time the user presses a number button: it's
 	purpose is to add numbers to the display. It checks for zero since zero means
 	that the calculator has started now or has been reset. */
-
-	// Initial state (turned on now or reset)
 	if (displayValue.textContent == 0) {
 		displayValue.textContent = clickedNumber;
-	} 
-	// An operation has been performed just now and the display shows the result
-	else if (displayValue.textContent == result) {
-		displayValue.textContent = clickedNumber;
-
-		// Now we can reset the result, waiting for a new one
-		result = 0;
 	}
-	// Added first number after zero... 
-	else if (displayValue.textContent != 0) {
-		// ...but not calling an operation yet
-		if (!isCalculating) {
-			displayValue.textContent += clickedNumber;
-		}
-		// Operation button pressed, calc for waiting second number;
-		else {
-			displayValue.textContent = clickedNumber;
-		}
+	else if (canOverwrite) {
+		displayValue.textContent = clickedNumber;
+		canOverwrite = false;
+	}
+	else {
+		displayValue.textContent += clickedNumber;
 	}
 }
-
 
 function setCurrentOperation(clickedOperation) {
 	selectedOperation = clickedOperation;
 	firstNumber = displayValue.textContent;
 	isCalculating = true;
+	canOverwrite = true;
 }
 
 function listenForOperationSelection() {
@@ -116,18 +104,10 @@ function performOperation() {
 			displayValue.textContent = result;
 		}
 		isCalculating = false;
+		canOverwrite = true;
 
 	})
 }
-
-// ---------- DEBUGGER ----------
-function myDebugger() {
-	console.log(firstNumber);
-	console.log(secondNumber);
-	console.log(selectedOperation);
-	console.log(isCalculating);
-}
-
 
 // ---------- Load event listeneres on page load ----------
 
@@ -136,7 +116,6 @@ function loadFunctions() {
 		listenForNumberInput();
 		listenForOperationSelection();
 		performOperation();
-		myDebugger();
 	})
 }
 
