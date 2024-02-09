@@ -1,6 +1,7 @@
 // ----------- Global variables & References -----------
 const displayValue = document.querySelector("#displayed-numbers");
 const resetButton = document.querySelector("#clear-btn");
+const operationButtons = document.querySelectorAll(".operation-button");
 
 let selectedOperation = undefined;
 let firstNumber = 0;
@@ -32,7 +33,7 @@ function divide(firstDividend, secondDividend) {
 	}
 }
 
-// ----------- Expression evaluation -----------
+// ----------- Expression evaluation and operations -----------
 
 function operate(operator, firstNumber, secondNumber = firstNumber) {
 	/* The operate function will call a different operation function according to the
@@ -55,55 +56,19 @@ function operate(operator, firstNumber, secondNumber = firstNumber) {
 		}
 	}
 
-
-function updateDisplayedValue(clickedNumber) {
-	/* This function gets called every time the user presses a number button: it's
-	purpose is to add numbers to the display. It checks for zero since zero means
-	that the calculator has started now or has been reset. */
-	if (displayValue.textContent == 0 && !isFloat(displayValue.textContent)) {
-		displayValue.textContent = clickedNumber;
-	} else if (canOverwrite) {
-		displayValue.textContent = clickedNumber;
-		canOverwrite = false;
-	} else {
-		displayValue.textContent += clickedNumber;
-	}
-}
-
 function setCurrentOperation(clickedOperation) {
 	/* Set the current operation to the clicked one, save the first number in memory and
-	 enable the calcution and display overwrting behaviour.*/
-	selectedOperation = clickedOperation;
+		enable the calcution and display overwrting behaviour.*/
+	if (clickedOperation === "x") {
+		selectedOperation = "*";
+	} else if (clickedOperation === "÷") {
+		selectedOperation = "/";
+	} else {
+		selectedOperation = clickedOperation;
+	}
 	firstNumber = displayValue.textContent;
 	isCalculating = true;
 	canOverwrite = true;
-}
-
-function listenForOperationSelection() {
-	const operationButtons = document.querySelectorAll(".operation-button");
-
-	operationButtons.forEach(function (operationButton) {
-		operationButton.addEventListener("mousedown", (ev) => {
-			const clickedOperation = ev.target.id;
-			setCurrentOperation(clickedOperation);
-		});
-	});
-}
-
-function listenForNumberInput() {
-	const numberButtons = document.querySelectorAll(".number-button");
-
-	numberButtons.forEach(function (numberButton) {
-		numberButton.addEventListener("mousedown", (ev) => {
-			const clickedNumberValue = ev.target.textContent;
-			updateDisplayedValue(clickedNumberValue);
-			resetButton.textContent = "C";
-		});
-	});
-}
-
-function listenForReset() {
-	resetButton.addEventListener("mousedown", resetCalculator);
 }
 
 function performOperation() {
@@ -112,6 +77,8 @@ function performOperation() {
 	/* Allow the evaluation only if there is a selected operation, perform the caclulation and 
 	update the screen accordingly.*/
 	evaluateButton.addEventListener("mousedown", () => {
+
+		// The calculation logic 
 		if (selectedOperation !== undefined) {
 			secondNumber = displayValue.textContent;
 			result = operate(selectedOperation, firstNumber, secondNumber);
@@ -120,24 +87,6 @@ function performOperation() {
 			canOverwrite = true;
 		}
 	});
-}
-
-function resetCalculator() {
-	/* Delete the current displayed number, if there is an operation loaded reset it and when pressing
-	AC reset everything. */
-	if (displayValue.textContent != 0) {
-		displayValue.textContent = 0;
-		resetButton.textContent = "AC";
-	}
-	else if (displayValue == 0 && isCalculating) {
-		isCalculating = false;
-	} else {
-		resetButton.textContent = "AC";
-		isCalculating = false;
-		firstNumber = 0;
-		secondNumber = undefined;
-		selectedOperation = undefined;
-	}
 }
 
 function changeSign() {
@@ -153,7 +102,7 @@ function changeSign() {
 function getPercentageFormat() {
 	const percentageButton = document.querySelector("#percentage-btn");
 
-	percentageButton.addEventListener("mousedown", () => displayValue.textContent /= 10);
+	percentageButton.addEventListener("mousedown", () => displayValue.textContent = "0." + displayValue.textContent);
 }
 
 function makeNumberDecimal() {
@@ -164,6 +113,84 @@ function makeNumberDecimal() {
 			displayValue.textContent += "."
 		}
 	})
+}
+
+function resetCalculator() {
+	/* Delete the current displayed number, if there is an operation loaded reset it and when pressing
+	AC reset everything. */
+	if (displayValue.textContent != 0) {
+		displayValue.textContent = 0;
+		resetButton.textContent = "AC";
+	}
+	else if (displayValue == 0 && isCalculating) {
+		isCalculating = false;
+		resetOperationUI()
+	} else {
+		resetButton.textContent = "AC";
+		isCalculating = false;
+		firstNumber = 0;
+		secondNumber = undefined;
+		selectedOperation = undefined;
+		resetOperationUI()
+	}
+}
+
+// ---------- UI Behaviour ------------
+
+function updateDisplayedValue(clickedNumber) {
+	/* This function gets called every time the user presses a number button: it's
+	purpose is to add numbers to the display. It checks for zero since zero means
+	that the calculator has started now or has been reset. */
+	if (displayValue.textContent == 0 && !isFloat(displayValue.textContent)) {
+		displayValue.textContent = clickedNumber;
+	} else if (canOverwrite) {
+		displayValue.textContent = clickedNumber;
+		canOverwrite = false;
+	} else {
+		displayValue.textContent += clickedNumber;
+	}
+}
+
+function updateOperationUI(clickedOperation) {
+	const selectedOperationButton = document.querySelector("#"+clickedOperation);
+	
+	resetOperationUI()
+	selectedOperationButton.classList.replace("operation-button", "selected-operation");
+}
+
+function resetOperationUI() {
+	operationButtons.forEach( (operationButton) => {
+		operationButton.className = "operation-button";
+	})
+}
+
+function listenForOperationSelection() {
+	operationButtons.forEach(function (operationButton) {
+		operationButton.addEventListener("mousedown", (ev) => {
+			const clickedOperation = ev.target.textContent;
+			setCurrentOperation(clickedOperation);
+
+			const clickedOperationButton = ev.target.id;
+			updateOperationUI(clickedOperationButton);
+		});
+	});
+}
+
+function listenForNumberInput() {
+	const numberButtons = document.querySelectorAll(".number-button");
+
+	numberButtons.forEach(function (numberButton) {
+		numberButton.addEventListener("mousedown", (ev) => {
+			const clickedNumberValue = ev.target.textContent;
+			updateDisplayedValue(clickedNumberValue);
+			resetOperationUI()
+			resetButton.textContent = "C";
+		});
+	});
+}
+
+function listenForReset() {
+	resetButton.addEventListener("mousedown", resetCalculator);
 }
 
 // ---------- Utility functions ----------

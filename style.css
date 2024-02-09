@@ -1,6 +1,9 @@
+/* -----------  General Settings ----------- */
 :root {
     font-size: 16px;
     font-family: "Helvetica", sans-serif;
+    --default-operation-bg: #009973;
+    --selected-operation-bg: azure;
 }
 
 body {
@@ -12,6 +15,8 @@ body {
     align-items: center;
     background-color: black;
 }
+
+/* -----------  Containers ----------- */
 
 #calculator-container {
     border: 1px solid grey;
@@ -44,6 +49,8 @@ body {
     justify-content: space-evenly;
 }
 
+/* -----------  Buttons ----------- */
+
 button {
     display: flex;
     justify-content: center;
@@ -58,12 +65,14 @@ button {
     background-color: #595959;
     color: azure;
 }
+
+.float-button:hover,
 .number-button:hover {
     background-color: #707070;
 } 
 .operation-button,
 .eval-button {
-    background-color: #009973;
+    background-color: var(--default-operation-bg);
 }
 
 .operation-button:hover,
@@ -82,4 +91,11 @@ button {
 #zero-btn {
     border-radius: 50% / 100%;
     width: 5rem;
+}
+
+/* -----------  Button states ----------- */
+
+.selected-operation {
+    background-color: var(--selected-operation-bg);
+    color: var(--default-operation-bg);
 }
