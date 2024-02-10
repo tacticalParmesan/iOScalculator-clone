@@ -150,6 +150,7 @@ function resetCalculator() {
 		selectedOperation = undefined;
 		resetOperationUI();
 	}
+	adjustDisplaySize()
 }
 
 // ---------- UI Behaviour ------------
