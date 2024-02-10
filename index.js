@@ -2,7 +2,7 @@
 const displayValue = document.querySelector("#displayed-numbers");
 const resetButton = document.querySelector("#clear-btn");
 const operationButtons = document.querySelectorAll(".operation-button");
-const root = document.querySelector(":root")
+const root = document.querySelector(":root");
 
 let selectedOperation = undefined;
 let firstNumber = 0;
@@ -150,7 +150,7 @@ function resetCalculator() {
 		selectedOperation = undefined;
 		resetOperationUI();
 	}
-	adjustDisplaySize()
+	adjustDisplaySize();
 }
 
 // ---------- UI Behaviour ------------
@@ -175,14 +175,12 @@ function updateDisplayedValue(enteredNumber) {
 function adjustDisplaySize() {
 	/* This function changes the size of the displayed content to fit the display.*/
 	if (displayValue.textContent.length > 6) {
-		root.style.setProperty("--display-font-size", "4rem");
+		root.style.setProperty("--display-font-size", "8vh");
 		if (displayValue.textContent.length > 8) {
-			root.style.setProperty("--display-font-size", "3rem");
-
+			root.style.setProperty("--display-font-size", "7vh");
 		}
 	} else if (displayValue.textContent.length < 7) {
-		root.style.setProperty("--display-font-size", "5rem");
-		;
+		root.style.setProperty("--display-font-size", "10vh");
 	}
 }
 

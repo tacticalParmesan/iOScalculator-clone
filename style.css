@@ -4,9 +4,9 @@
     font-family: "Helvetica", sans-serif;
     --default-operation-bg: #009973;
     --selected-operation-bg: azure;
-    --button-size: 4rem;
-    --button-font-size: 2rem;
-    --display-font-size: 5rem;
+    --button-size: 8.5vh;
+    --button-font-size: 4vh;
+    --display-font-size: 10vh;
 }
 
 body {
@@ -42,6 +42,7 @@ body {
 
 #buttons-container {
     display: flex;
+    flex: 0;
     flex-direction: column;
     justify-content: flex-end;
     gap: 0.5rem;
@@ -61,8 +62,8 @@ button {
     font-family: "Helvetica", sans-serif;
     font-weight: bold;
     font-size: var(--button-font-size);
-    width: var(--button-size);
-    height: var(--button-size);
+    min-width: var(--button-size);
+    min-height: var(--button-size);
     padding: 0.6rem;
     border-radius: 100%;
     border: none;
