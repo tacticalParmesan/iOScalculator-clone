@@ -24,8 +24,8 @@ body {
     padding: 0.5rem;
     display: flex;
     flex-direction: column;
-    min-height: 300px;
-    min-width: 170px;
+    min-height: 60vh;
+    min-width: 30vh;
     justify-content: flex-end;
 
 }
@@ -99,3 +99,9 @@ button {
     background-color: var(--selected-operation-bg);
     color: var(--default-operation-bg);
 }
+
+/* ----------- Mobile support ------------ */
+
+ @media screen {
+    
+ }
