@@ -7,6 +7,8 @@
     --button-size: 8.5vh;
     --button-font-size: 4vh;
     --display-font-size: 10vh;
+    --container-padding: 1vh;
+    --container--gaps: 1vh;
 }
 
 body {
@@ -24,7 +26,7 @@ body {
 #calculator-container {
     border: 1px solid grey;
     border-radius: 6px;
-    padding: 1rem;
+    padding: var(--container-padding);
     display: flex;
     flex-direction: column;
     min-height: 75vh;
@@ -37,7 +39,7 @@ body {
     text-align: right;
     font-size: var(--display-font-size);
     color: azure;
-    padding-right: 0.2rem;
+    padding-right: var(--container-padding);
 }
 
 #buttons-container {
@@ -45,7 +47,7 @@ body {
     flex: 0;
     flex-direction: column;
     justify-content: flex-end;
-    gap: 0.5rem;
+    gap: var(--container--gaps);
 }
 
 .buttons-row {
