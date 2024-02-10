@@ -2,6 +2,7 @@
 const displayValue = document.querySelector("#displayed-numbers");
 const resetButton = document.querySelector("#clear-btn");
 const operationButtons = document.querySelectorAll(".operation-button");
+const root = document.querySelector(":root")
 
 let selectedOperation = undefined;
 let firstNumber = 0;
@@ -173,12 +174,14 @@ function updateDisplayedValue(enteredNumber) {
 function adjustDisplaySize() {
 	/* This function changes the size of the displayed content to fit the display.*/
 	if (displayValue.textContent.length > 6) {
-		displayValue.style.fontSize = "2.2rem";
+		root.style.setProperty("--display-font-size", "4rem");
 		if (displayValue.textContent.length > 8) {
-			displayValue.style.fontSize = "1.8rem";
+			root.style.setProperty("--display-font-size", "3rem");
+
 		}
 	} else if (displayValue.textContent.length < 7) {
-		displayValue.style.fontSize = "2.5rem";
+		root.style.setProperty("--display-font-size", "5rem");
+		;
 	}
 }
 
