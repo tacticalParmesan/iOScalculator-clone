@@ -16,9 +16,30 @@ body {
     padding: 0px;
     height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: black;
+}
+
+/* ----------- Header ----------- */
+a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: azure;
+}
+
+.bx{
+    display: flex;
+    margin-bottom: 2vh;
+    font-size: 4vh;
+}
+
+#link-text {
+    font-family: consolas;
+    font-size: 2vh;
+    padding-bottom: 2vh;
 }
 
 /* -----------  Containers ----------- */
